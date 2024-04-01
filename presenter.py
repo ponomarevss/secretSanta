@@ -1,31 +1,43 @@
-from typing import Any, Dict
+from sqlalchemy import select, Engine
+from sqlalchemy.orm import Session
 
-from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
-from aiogram.utils.keyboard import InlineKeyboardBuilder
-
-
-# def get_stateless_message_text(user_id, username) -> Dict[str, Any]:
-    # найти юзера
-    # если есть фразу с возвращением, короткая сводка о группах
-    # если нет внести в бд
-
-    # избавить презентер от Message and FSMContext
+from model.entities import User, Group, Member
 
 
+class Presenter:
+    def __init__(self, engine: Engine):
+        self.engine = engine
 
-    # этот хэндлер принимает не чаще чем раз в пять секунд
+    def provide_user(self, user_id, s_username) -> User:
+        user = self.fetch_user(user_id)
+        if user is None:
+            user = User(user_id=user_id, s_username=s_username)
+            self.save_user(user)
+        return user
 
+    def save_user(self, user: User):
+        with Session(self.engine) as session:
+            session.merge(user)
+            session.commit()
 
-    # return f'Welcome, {username}' # подумать что возвращать
+    def fetch_user(self, user_id: int) -> User:
+        stmt = select(User).where(User.user_id == user_id)
+        return Session(self.engine).scalar(stmt)
 
+    def save_group(self, group: Group):
+        with Session(self.engine) as session:
+            session.merge(group)
+            session.commit()
 
-def get_stateless_message_ikb() -> InlineKeyboardMarkup:
-    return (InlineKeyboardBuilder().button(text=f'My groups', callback_data=f'groups')
-            .button(text=f'Create group', callback_data=f'create_group')
-            .as_markup()
-            )
+    def fetch_group(self, group_id: str) -> Group:
+        stmt = select(Group).where(Group.group_id == group_id)
+        return Session(self.engine).scalar(stmt)
 
+    def save_member(self, member: Member):
+        with Session(self.engine) as session:
+            session.merge(member)
+            session.commit()
 
-async def get_groups(state: FSMContext):
-    pass
+    def fetch_member(self, member_id: str) -> Member:
+        stmt = select(Member).where(Member.member_id == member_id)
+        return Session(self.engine).scalar(stmt)

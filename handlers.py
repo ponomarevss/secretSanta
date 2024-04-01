@@ -1,9 +1,12 @@
 from aiogram import Router, F
-from aiogram.filters import CommandStart
+from aiogram.filters import CommandStart, Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 
-import presenter
+from model.entities import User
+from presenter import Presenter
+
+# import presenter
 
 rt = Router()
 
@@ -21,18 +24,24 @@ async def create_group_button_callback_handler(callback: CallbackQuery, state: F
 
 
 @rt.message(CommandStart())
-async def command_start_message_handler(message: Message):
-    await stateless_message_handler()
+async def command_start_message_handler(message: Message, presenter: Presenter):
+    await stateless_message_handler(message, presenter)
+
+# @rt.message(Command('save'))
+# async def command_save_handler(message: Message, presenter: Presenter):
+#     user = User(user_id=101)
+#     presenter.save_user(user)
+#     await message.answer('presenter.save_user(User(user_id=101))')
+#
+#
+# @rt.message(Command('fetch'))
+# async def command_fetch_handler(message: Message, presenter: Presenter):
+#     user = presenter.fetch_user(101)
+#     print(user)
+#     await message.answer(user.__repr__())
 
 
 @rt.message()
-async def stateless_message_handler(message: Message):
-    # найти юзера
-    # если есть фразу с возвращением, короткая сводка о группах
-    # если нет внести в бд
-
-    # избавить презентер от Message and FSMContext
-
-    # text = presenter.get_stateless_message_text(message.from_user.id, message.from_user.username)
-    ikb = presenter.get_stateless_message_ikb()
-    # await message.answer(text=text, reply_markup=ikb)
+async def stateless_message_handler(message: Message, presenter: Presenter):
+    user = presenter.provide_user(message.from_user.id, message.from_user.username)
+    await message.answer(user.__repr__())
