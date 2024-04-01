@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from typing import List, Optional
+from typing import List
 
-from sqlalchemy import Column, BigInteger, Table, ForeignKey, String
+from sqlalchemy import BigInteger, ForeignKey, String
 from sqlalchemy.orm import mapped_column, DeclarativeBase, relationship, Mapped
 
 
@@ -10,24 +10,16 @@ class Base(DeclarativeBase):
     pass
 
 
-association_table = Table(
-    "association_table",
-    Base.metadata,
-    Column("left_id", ForeignKey("t_user.user_id"), primary_key=True),
-    Column("right_id", ForeignKey("t_group.group_id"), primary_key=True),
-)
-
-
 class User(Base):
     __tablename__ = "t_user"
 
     user_id = mapped_column(BigInteger, primary_key=True)
-    groups: Mapped[List[Group]] = relationship(secondary="association_table", back_populates="users")
+    members: Mapped[List[Member]] = relationship(back_populates='user')
 
     def __repr__(self) -> str:
         return (f"User("
                 f"user_id={self.user_id}, "
-                f"groups={[g.group_id for g in self.groups]}"
+                f"members={[m.member_id for m in self.members]}"
                 f")")
 
 
@@ -37,8 +29,7 @@ class Group(Base):
     group_id = mapped_column(BigInteger, primary_key=True)
     s_name = mapped_column(String(30))
     s_description = mapped_column(String(150))
-    admin_id = mapped_column(BigInteger)
-    users: Mapped[List[User]] = relationship(secondary='association_table', back_populates='groups')
+    admin_id = mapped_column(BigInteger, ForeignKey('t_user.user_id'))
     members: Mapped[List[Member]] = relationship(back_populates='group')
 
     def __repr__(self) -> str:
@@ -47,7 +38,6 @@ class Group(Base):
                 f"s_name={self.s_name}, "
                 f"s_description={self.s_description}, "
                 f"admin_id={self.admin_id}, "
-                f"users={[u.user_id for u in self.users]}, "
                 f"members={[m.member_id for m in self.members]}"
                 f")")
 
@@ -61,8 +51,10 @@ class Member(Base):
     s_address = mapped_column(String(150))
     recipient_id = mapped_column(BigInteger, ForeignKey("t_member.member_id"))
     santas: Mapped[List[Member]] = relationship('Member')
+    user_id = mapped_column(BigInteger, ForeignKey('t_user.user_id'))
+    user: Mapped[User] = relationship('User', back_populates='members')
     group_id = mapped_column(BigInteger, ForeignKey('t_group.group_id'))
-    group: Mapped[Group] = relationship('Group', back_populates='members')
+    group: Mapped[Group] = relationship(back_populates='members')
 
     def __repr__(self) -> str:
         return (f"Member("
@@ -72,6 +64,7 @@ class Member(Base):
                 f"s_address={self.s_address}, "
                 f"recipient_id={self.recipient_id}, "
                 f"santas={[s.member_id for s in self.santas]}, "
+                f"user_id={self.user_id}, "
                 f"group_id={self.group_id}"
                 f")")
 
