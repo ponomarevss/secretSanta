@@ -2,10 +2,9 @@ import asyncio
 import logging
 import sys
 
-from aiogram.fsm.storage.redis import RedisStorage
-from sqlalchemy import create_engine, select
 from aiogram import Bot, Dispatcher
-from sqlalchemy.orm import Session
+from aiogram.fsm.storage.redis import RedisStorage
+from sqlalchemy import create_engine
 
 from admin import DB_URL, API_TOKEN, CACHE_URL
 from handlers import rt
@@ -18,27 +17,6 @@ async def start():
     engine = create_engine(url=DB_URL)
     Base.metadata.create_all(engine)
     presenter = Presenter(engine)
-    # u1 = User(user_id=101)
-    # g1 = Group(group_id=901)
-    # m1 = Member(member_id=301)
-
-    # u1.members = [m1]
-    # g1.members.append(m1)
-
-    # with Session(engine) as session:
-        # session.merge(u1)
-        # session.merge(g1)
-        # session.merge(m1)
-        # session.commit()
-        # stmt = select(Member).where(Member.member_id == 301)
-        # member = session.scalar(stmt)
-        # stmt = select(User).where(User.user_id == 101)
-        # user = session.scalar(stmt)
-        # stmt = select(Group).where(Group.group_id == 901)
-        # gr = session.scalar(stmt)
-        # print(member)
-        # for m in gr.members:
-        #     print(m)
 
     bot = Bot(API_TOKEN)
     storage = RedisStorage.from_url(url=CACHE_URL, connection_kwargs={"decode_responses": True})
