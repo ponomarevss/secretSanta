@@ -1,12 +1,9 @@
-import asyncio
-import uuid
-
 from aiogram import Router, F
 from aiogram.filters import CommandStart
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 
-from keyboards import get_stateless_message_ikb
+from keyboards import get_main_menu_ikb, get_create_group_ikb, get_members_ikb, get_edit_member_ikb
 from presenter import Presenter
 from states import GroupStates
 
@@ -16,61 +13,69 @@ rt = Router()
 @rt.message(CommandStart())
 async def command_start_message_handler(message: Message, state: FSMContext, presenter: Presenter):
     await state.clear()
-    await stateless_message_handler(message, presenter)
-
-
-@rt.callback_query(F.data.startswith("groups"))
-async def groups_button_callback_handler(callback: CallbackQuery, state: FSMContext):
-    pass
+    data = await state.update_data(
+        user=presenter.start_main_menu_update(message.from_user.id, message.from_user.username))
+    await message.answer(text=str(data['user']['s_username']), reply_markup=get_main_menu_ikb())
 
 
 @rt.callback_query(F.data.startswith("create_group"))
 async def create_group_button_callback_handler(callback: CallbackQuery, state: FSMContext):
-    await callback.message.edit_text(text=callback.message.text, reply_markup=None)
+    data = await state.get_data()
+    await callback.message.edit_text(
+        text=f"{data['user']['s_username']}\n\n Create new group with you as a first member",
+        reply_markup=get_create_group_ikb())
 
-    new_group = {'admin_id': callback.message.from_user.id, 'group_id': str(uuid.uuid4())}
-    new_member = {'member_id': f'{callback.message.from_user.id}:{str(uuid.uuid4())}'}
 
-    await state.update_data(new_group=new_group, new_member=new_member)
+@rt.callback_query(F.data.startswith("confirm_create_group"))
+async def confirm_create_group_button_callback(
+        callback: CallbackQuery, state: FSMContext, presenter: Presenter):
 
-    await callback.message.answer(text=str(new_group))
-    await callback.message.answer(text=str(new_member))
-    await asyncio.sleep(1)
-    await callback.message.answer(text='Set new group name')
+    data = await state.get_data()
+    data = await state.update_data(presenter.create_group_update(data['user']['user_id']))
 
-    await state.set_state(GroupStates.name)
+    user, group, member = data['user'], data['group'], data['member']
+    await callback.message.edit_text(
+        text=f"{user['s_username']}\n{group['group_id']}\n{member['member_id']}",
+        reply_markup=get_edit_member_ikb(user['user_id'], group['admin_id'])
+    )
+
+
+@rt.callback_query(F.data.startswith("to_main_menu"))
+async def to_main_menu_button_callback_handler(callback: CallbackQuery, state: FSMContext, presenter: Presenter):
+    data = await state.get_data()
+    await state.clear()
+    data = await state.update_data(user=presenter.return_main_menu_update(data['user']['user_id']))
+    await callback.message.edit_text(text=data['user']['s_username'], reply_markup=get_main_menu_ikb())
+
+
+@rt.callback_query(F.data.startswith("groups"))
+async def groups_button_callback(callback: CallbackQuery, state: FSMContext, presenter: Presenter):
+    data = await state.get_data()
+    user = data['user']
+    await callback.message.edit_text(text=f"{user['s_username']}",
+                                     reply_markup=get_members_ikb(user['members']))
+
+
+@rt.callback_query(F.data.startswith("member_m"))
+async def member_button_callback(callback: CallbackQuery, state: FSMContext, presenter: Presenter):
+    data = await state.update_data(presenter.choose_member_update(callback.data.split('_')[1]))
+    user, group, member = data['user'], data['group'], data['member']
+    await callback.message.edit_text(
+        text=f"{user['s_username']}\n{group['group_id']}\n{member['member_id']}",
+        reply_markup=get_edit_member_ikb(user['user_id'], group['admin_id'])
+    )
 
 
 @rt.message(GroupStates.name)
 async def group_states_name_message_handler(message: Message, state: FSMContext):
-    data = await state.get_data()
-
-    new_group = data['new_group']
-    new_group['s_name'] = message.text
-    await state.update_data(new_group=new_group)
-
-    await message.answer(text=str(new_group))
-    await asyncio.sleep(1)
-    await message.answer(text='Set new group description')
-
-    await state.set_state(GroupStates.description)
+    pass
 
 
 @rt.message(GroupStates.description)
 async def group_states_description_message_handler(message: Message, state: FSMContext):
-    data = await state.get_data()
-
-    new_group = data['new_group']
-    new_group['s_description'] = message.text
-
-    await state.update_data(new_group=new_group)
-
-    await message.answer(text=str(new_group))
-
-    await state.set_state(None)
+    pass
 
 
 @rt.message()
-async def stateless_message_handler(message: Message, presenter: Presenter):
-    user = presenter.provide_user(message.from_user.id, message.from_user.username)
-    await message.answer(text=user.__repr__(), reply_markup=get_stateless_message_ikb())
+async def stateless_message_handler(message: Message):
+    pass
