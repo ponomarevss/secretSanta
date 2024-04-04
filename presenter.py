@@ -1,7 +1,7 @@
 import uuid
 from typing import Dict, Any
 
-from sqlalchemy import select, Engine
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from model.entities import User, Group, Member
@@ -32,8 +32,8 @@ def group_to_dict(group) -> Dict[str, Any]:
 
 
 class Presenter:
-    def __init__(self, engine: Engine):
-        self.engine = engine
+    def __init__(self, session: Session):
+        self.session = session
 
     def start_main_menu_update(self, user_id, s_username) -> Dict[str, Any]:
         user = self.fetch_user(user_id)
@@ -62,28 +62,25 @@ class Presenter:
         return dict(member=member_to_dict(member), group=group_to_dict(member.group))
 
     def save_user(self, user: User):
-        with Session(self.engine) as session:
-            session.merge(user)
-            session.commit()
+        self.session.merge(user)
+        self.session.commit()
 
     def fetch_user(self, user_id: int) -> User:
         stmt = select(User).where(User.user_id == user_id)
-        return Session(self.engine).scalar(stmt)
+        return self.session.scalar(stmt)
 
     def save_group(self, group: Group):
-        with Session(self.engine) as session:
-            session.merge(group)
-            session.commit()
+        self.session.merge(group)
+        self.session.commit()
 
     def fetch_group(self, group_id: str) -> Group:
         stmt = select(Group).where(Group.group_id == group_id)
-        return Session(self.engine).scalar(stmt)
+        return self.session.scalar(stmt)
 
     def save_member(self, member: Member):
-        with Session(self.engine) as session:
-            session.merge(member)
-            session.commit()
+        self.session.merge(member)
+        self.session.commit()
 
     def fetch_member(self, member_id: str) -> Member:
         stmt = select(Member).where(Member.member_id == member_id)
-        return Session(self.engine).scalar(stmt)
+        return self.session.scalar(stmt)

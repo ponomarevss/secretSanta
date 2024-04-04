@@ -4,10 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3dd57ff1-ddcd-4e84-aace-b3ea435d75df" name="Changes" comment="group and member raw creation">
+    <list default="true" id="3dd57ff1-ddcd-4e84-aace-b3ea435d75df" name="Changes" comment="group and member create, observe groups">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/handlers.py" beforeDir="false" afterPath="$PROJECT_DIR$/handlers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/keyboards.py" beforeDir="false" afterPath="$PROJECT_DIR$/keyboards.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/middlewares.py" beforeDir="false" afterPath="$PROJECT_DIR$/middlewares.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/entities.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/entities.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/presenter.py" beforeDir="false" afterPath="$PROJECT_DIR$/presenter.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -128,7 +129,15 @@
       <option name="project" value="LOCAL" />
       <updated>1712037634881</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="group and member create, observe groups">
+      <option name="closed" value="true" />
+      <created>1712149373054</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1712149373054</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -137,6 +146,7 @@
     <MESSAGE value="entities: user - members, group - members" />
     <MESSAGE value="presenter: user, member, group - save and fetch" />
     <MESSAGE value="group and member raw creation" />
-    <option name="LAST_COMMIT_MESSAGE" value="group and member raw creation" />
+    <MESSAGE value="group and member create, observe groups" />
+    <option name="LAST_COMMIT_MESSAGE" value="group and member create, observe groups" />
   </component>
 </project>

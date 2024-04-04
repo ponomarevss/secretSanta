@@ -5,6 +5,7 @@ import sys
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.redis import RedisStorage
 from sqlalchemy import create_engine
+from sqlalchemy.orm import Session
 
 from admin import DB_URL, API_TOKEN, CACHE_URL
 from handlers import rt
@@ -16,7 +17,9 @@ from presenter import Presenter
 async def start():
     engine = create_engine(url=DB_URL)
     Base.metadata.create_all(engine)
-    presenter = Presenter(engine)
+
+    session = Session(engine)
+    presenter = Presenter(session)
 
     bot = Bot(API_TOKEN)
     storage = RedisStorage.from_url(url=CACHE_URL, connection_kwargs={"decode_responses": True})
