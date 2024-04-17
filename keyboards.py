@@ -18,10 +18,10 @@ def get_create_group_ikb() -> InlineKeyboardMarkup:
             .as_markup())
 
 
-def get_members_ikb(members: list[str]) -> InlineKeyboardMarkup:
+def get_members_ikb(members: list[int]) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     for m in members:
-        builder.button(text=m, callback_data=f'member_{m}')
+        builder.button(text=f"{m}", callback_data=f'member_choose_{m}')
     return (builder
             .button(text='Main menu', callback_data='to_main_menu')
             .adjust(1)

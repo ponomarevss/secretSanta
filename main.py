@@ -4,13 +4,13 @@ import sys
 
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.redis import RedisStorage
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, select, func
 from sqlalchemy.orm import Session
 
 from admin import DB_URL, API_TOKEN, CACHE_URL
 from handlers import rt
 from middlewares import PresenterMiddleware
-from model.entities import Base
+from model.entities import Base, Link
 from presenter import Presenter
 
 
