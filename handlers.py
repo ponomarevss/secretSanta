@@ -66,12 +66,14 @@ async def to_main_menu_button_callback_handler(callback: CallbackQuery, state: F
 async def groups_button_callback(callback: CallbackQuery, state: FSMContext, presenter: Presenter):
     data = await state.get_data()
     user = data['user']
-    await callback.message.edit_text(text=f"{user['s_username']}", reply_markup=get_members_ikb(user['members']))
+    await callback.message.edit_text(
+        text=f"{user['s_username']}", reply_markup=get_members_ikb(user['user_id'], user['members']))
 
 
 @rt.callback_query(F.data.startswith("member_choose"))
 async def member_button_callback(callback: CallbackQuery, state: FSMContext, presenter: Presenter):
-    data = await state.update_data(presenter.choose_member_update(callback.data.split('_')[2]))
+    member_id, user_id = callback.data.split('_')[2], callback.data.split('_')[3]
+    data = await state.update_data(presenter.choose_member_update(member_id=member_id, user_id=user_id))
     user, group, member = data['user'], data['group'], data['member']
     await callback.message.edit_text(
         text=f"{user['s_username']}\n{group['group_id']}\n{member['member_id']}",

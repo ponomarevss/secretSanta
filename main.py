@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 from admin import DB_URL, API_TOKEN, CACHE_URL
 from handlers import rt
 from middlewares import PresenterMiddleware
-from model.entities import Base, Link
+from model.entities import Base, Link, Group, User
 from presenter import Presenter
 
 
