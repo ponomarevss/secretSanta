@@ -1,5 +1,3 @@
-from typing import List
-
 from sqlalchemy import select, func, and_
 from sqlalchemy.orm import Session
 
@@ -23,20 +21,31 @@ class MemberRepository:
             member_id = 1
         return member_id
 
-    def get_member(self, member_id: int, user_id) -> Member:
+    def get_member(self, member_id: int, user_id: int) -> Member:
         stmt = select(Member).where(and_(Member.member_id == member_id, Member.user_id == user_id))
         return self.session.scalar(stmt)
 
-    def create_member(self, user_id: int, group_auto_id) -> Member:
+    def get_member_by_user_and_group(self, user_id: int, group_auto_id: int) -> Member:
+        stmt = select(Member).where(and_(Member.user_id == user_id, Member.group_auto_id == group_auto_id))
+        return self.session.scalar(stmt)
+
+    def provide_member(self, user_id: int, group_auto_id: int) -> Member:
+        member = self.get_member_by_user_and_group(user_id, group_auto_id)
+        if member is None:
+            member = self.create_member(user_id, group_auto_id)
+        return member
+    #TODO Где-то косяк с добавлением члена по ссылке. Потестить методы предоставления и создания члена
+
+    def create_member(self, user_id: int, group_auto_id: int) -> Member:
         member_id = self.new_member_id(user_id)
         member = Member(member_id=member_id, user_id=user_id, group_auto_id=group_auto_id)
         self.save_member(member)
         return self.get_member(member_id=member_id, user_id=user_id)
 
-    def get_members_list_by_user(self, user_id: int) -> List[Member]:
+    def get_members_for_user(self, user_id: int) -> list[Member]:
         stmt = select(Member).where(Member.user_id == user_id)
         return list(self.session.scalars(stmt))
 
-    def get_members_list_by_group(self, group_auto_id: int) -> List[Member]:
+    def get_members_for_group(self, group_auto_id: int) -> list[Member]:
         stmt = select(Member).where(Member.group_auto_id == group_auto_id)
         return list(self.session.scalars(stmt))

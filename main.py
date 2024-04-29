@@ -11,6 +11,8 @@ from admin import DB_URL, API_TOKEN, CACHE_URL
 from handlers import rt
 from middlewares import PresenterMiddleware
 from model.entities import Base, Link, Group, User
+from new_handlers import new_rt
+from new_presenter import NewPresenter
 from presenter import Presenter
 
 
@@ -19,14 +21,16 @@ async def start():
     Base.metadata.create_all(engine)
 
     session = Session(engine)
-    presenter = Presenter(session)
+    presenter = NewPresenter(session)
+    # presenter = Presenter(session)
 
     bot = Bot(API_TOKEN)
     storage = RedisStorage.from_url(url=CACHE_URL, connection_kwargs={"decode_responses": True})
 
     dp = Dispatcher(storage=storage)
     dp.update.middleware.register(PresenterMiddleware(presenter=presenter))
-    dp.include_router(router=rt)
+    dp.include_router(router=new_rt)
+    # dp.include_router(router=rt)
 
     try:
         await dp.start_polling(bot)

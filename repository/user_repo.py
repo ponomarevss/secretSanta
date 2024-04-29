@@ -8,7 +8,7 @@ class UserRepository:
     def __init__(self, session: Session):
         self.session = session
 
-    def provide_user(self, s_username, user_id):
+    def provide_user(self, user_id, s_username):
         user = self.get_user(user_id)
         if user is None:
             user = User(user_id=user_id, s_username=s_username)

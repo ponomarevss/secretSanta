@@ -15,13 +15,13 @@ class Link(Base):
 
     auto_id = mapped_column(Integer, primary_key=True)
     link_id = mapped_column(Integer)
-    group_id = mapped_column(Integer, ForeignKey('t_group.auto_id'))
+    group_auto_id = mapped_column(Integer, ForeignKey('t_group.auto_id'))
 
     def __repr__(self) -> str:
         return (f"Link("
                 f"auto_id={self.auto_id}, "
                 f"link_id={self.link_id}, "
-                f"group_id={self.group_id}, "
+                f"group_auto_id={self.group_auto_id}, "
                 f")")
 
 
