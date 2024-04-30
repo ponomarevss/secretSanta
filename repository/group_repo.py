@@ -1,7 +1,7 @@
 from sqlalchemy import select, and_, func, ScalarResult
 from sqlalchemy.orm import Session
 
-from model.entities import Group
+from model.entities import Group, Member
 
 
 class GroupRepository:
@@ -38,3 +38,10 @@ class GroupRepository:
     def get_groups_list(self, user_id: int) -> ScalarResult[Group]:
         stmt = select(Group).where(Group.admin_id == user_id)
         return self.session.scalars(stmt)
+    # TODO: здесь возвращаются только те группы, где ты админ
+
+    def get_groups_for_user(self, user_id: int):
+        groups_id_stmt = select(Member.group_auto_id).where(Member.user_id == user_id)
+        stmt = select(Group).where(Group.auto_id.in_(groups_id_stmt))
+        return self.session.scalars(stmt)
+        #TODO нужет метод возвращающий все группы для пользователя. нужно пройти по всем его членам и взять группу для каждого
