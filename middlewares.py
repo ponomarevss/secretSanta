@@ -4,13 +4,11 @@ from typing import Callable, Dict, Any, Awaitable
 from aiogram import BaseMiddleware
 from aiogram.types import TelegramObject, Message
 
-from new_presenter import NewPresenter
 from presenter import Presenter
 
 
 class PresenterMiddleware(BaseMiddleware):
-    def __init__(self, presenter: NewPresenter):
-    # def __init__(self, presenter: Presenter):
+    def __init__(self, presenter: Presenter):
         super().__init__()
         self.presenter = presenter
 

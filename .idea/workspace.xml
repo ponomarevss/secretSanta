@@ -4,11 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3dd57ff1-ddcd-4e84-aace-b3ea435d75df" name="Changes" comment="new handler and presenter&#10;TODO: user exchange">
+    <list default="true" id="3dd57ff1-ddcd-4e84-aace-b3ea435d75df" name="Changes" comment="data as main argument for presenter">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/new_handlers.py" beforeDir="false" afterPath="$PROJECT_DIR$/new_handlers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/new_presenter.py" beforeDir="false" afterPath="$PROJECT_DIR$/new_presenter.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/handlers.py" beforeDir="false" afterPath="$PROJECT_DIR$/handlers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/middlewares.py" beforeDir="false" afterPath="$PROJECT_DIR$/middlewares.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/entities.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/entities.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/new_handlers.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/new_presenter.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/presenter.py" beforeDir="false" afterPath="$PROJECT_DIR$/presenter.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/repository/group_repo.py" beforeDir="false" afterPath="$PROJECT_DIR$/repository/group_repo.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/repository/member_repo.py" beforeDir="false" afterPath="$PROJECT_DIR$/repository/member_repo.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -177,7 +183,15 @@
       <option name="project" value="LOCAL" />
       <updated>1714403904691</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="data as main argument for presenter">
+      <option name="closed" value="true" />
+      <created>1714470863743</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1714470863743</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -192,6 +206,7 @@
     <MESSAGE value="entities without relations, presenter" />
     <MESSAGE value="repositories involved" />
     <MESSAGE value="new handler and presenter&#10;TODO: user exchange" />
-    <option name="LAST_COMMIT_MESSAGE" value="new handler and presenter&#10;TODO: user exchange" />
+    <MESSAGE value="data as main argument for presenter" />
+    <option name="LAST_COMMIT_MESSAGE" value="data as main argument for presenter" />
   </component>
 </project>

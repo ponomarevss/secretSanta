@@ -34,7 +34,6 @@ class MemberRepository:
         if member is None:
             member = self.create_member(user_id, group_auto_id)
         return member
-    #TODO Где-то косяк с добавлением члена по ссылке. Потестить методы предоставления и создания члена
 
     def create_member(self, user_id: int, group_auto_id: int) -> Member:
         member_id = self.new_member_id(user_id)
@@ -42,10 +41,14 @@ class MemberRepository:
         self.save_member(member)
         return self.get_member(member_id=member_id, user_id=user_id)
 
-    def get_members_for_user(self, user_id: int) -> list[Member]:
-        stmt = select(Member).where(Member.user_id == user_id)
-        return list(self.session.scalars(stmt))
+    # def get_members_for_user(self, user_id: int) -> list[Member]:
+    #     stmt = select(Member).where(Member.user_id == user_id)
+    #     return list(self.session.scalars(stmt))
 
-    def get_members_for_group(self, group_auto_id: int) -> list[Member]:
-        stmt = select(Member).where(Member.group_auto_id == group_auto_id)
-        return list(self.session.scalars(stmt))
+    # def get_members_for_group(self, group_auto_id: int) -> list[Member]:
+    #     stmt = select(Member).where(Member.group_auto_id == group_auto_id)
+    #     return list(self.session.scalars(stmt))
+
+    def is_user_not_in_group(self, user_id: int, group_auto_id) -> bool:
+        stmt = select(Member).where(and_(Member.user_id == user_id, Member.group_auto_id == group_auto_id))
+        return self.session.scalar(stmt) is None

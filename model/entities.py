@@ -1,9 +1,7 @@
 from __future__ import annotations
 
-from typing import List
-
 from sqlalchemy import BigInteger, ForeignKey, String, Integer
-from sqlalchemy.orm import mapped_column, DeclarativeBase, relationship, Mapped
+from sqlalchemy.orm import mapped_column, DeclarativeBase
 
 
 class Base(DeclarativeBase):
