@@ -45,9 +45,9 @@ class MemberRepository:
     #     stmt = select(Member).where(Member.user_id == user_id)
     #     return list(self.session.scalars(stmt))
 
-    # def get_members_for_group(self, group_auto_id: int) -> list[Member]:
-    #     stmt = select(Member).where(Member.group_auto_id == group_auto_id)
-    #     return list(self.session.scalars(stmt))
+    def get_members_for_group(self, group_auto_id: int) -> list[Member]:
+        stmt = select(Member).where(Member.group_auto_id == group_auto_id)
+        return list(self.session.scalars(stmt))
 
     def is_user_not_in_group(self, user_id: int, group_auto_id) -> bool:
         stmt = select(Member).where(and_(Member.user_id == user_id, Member.group_auto_id == group_auto_id))

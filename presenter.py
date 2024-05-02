@@ -43,10 +43,16 @@ class Presenter:
     def choose_group_update(self, group_auto_id, data):
         group = self.group_repo.get_group_by_auto_id(auto_id=group_auto_id)
         member = self.member_repo.get_member_by_user_and_group(user_id=data['user_id'], group_auto_id=group_auto_id)
+        members = self.member_repo.get_members_for_group(group_auto_id=group_auto_id)
         data['group'] = self._group_to_dict(group)
         data['member'] = self._member_to_dict(member)
+        data['members'] = [self._member_to_dict(m) for m in members]
         data['is_admin'] = data['user_id'] == group.admin_id
-        data['text'] = f"{data['s_username']}, you are in\ngroup: {group.group_id}\nas member: {member.member_id}"
+        data['text'] = (f"{data['s_username']}, you are in group: {group.group_id}\n"
+                        f"as member: {member.member_id}\n"
+                        f"members list:\n")
+        for m in members:
+            data['text'] += f"{m.auto_id} - {m.user_id}\n"
 
     def add_member_by_deeplink_update(self, args: str, user_id, s_username, data):
         data['user_id'] = user_id
