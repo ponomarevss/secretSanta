@@ -74,6 +74,12 @@ class Presenter:
         self.link_repo.save_link(Link(link_id=link_id, group_auto_id=group_auto_id))
         return f"{link_id};{group_auto_id}"
 
+    def group_edit_update(self, data):
+        data['text'] = (f"Edit group\n"
+                        f"ID:{data['group']['auto_id']}\n"
+                        f"Name: {data['group']['s_name']}\n"
+                        f"Description: {data['group']['s_description']}")
+
     def _group_to_dict(self, group) -> Dict[str, Any]:
         return dict(auto_id=group.auto_id,
                     group_id=group.group_id,

@@ -5,7 +5,7 @@ from aiogram.types import Message, CallbackQuery
 from aiogram.utils.deep_linking import create_start_link
 from aiogram.utils.payload import decode_payload
 
-from keyboards import get_main_menu_ikb, get_create_group_ikb, get_groups_ikb, get_edit_ikb
+from keyboards import get_main_menu_ikb, get_create_group_ikb, get_groups_ikb, get_edit_ikb, get_edit_group_ikb
 from presenter import Presenter
 
 rt = Router()
@@ -69,14 +69,21 @@ async def group_button_callback(callback: CallbackQuery, state: FSMContext, pres
     group_auto_id = callback.data.split('_')[2]
     data = await state.get_data()
     presenter.choose_group_update(group_auto_id=group_auto_id, data=data)
-    data = await state.update_data(data)
+    await state.update_data(data)
     text, is_admin = data['text'], data['is_admin']
     await callback.message.edit_text(text=text, reply_markup=get_edit_ikb(is_admin))
 
 
 @rt.callback_query(F.data.startswith('group_edit'))
 async def group_edit_callback(callback: CallbackQuery, state: FSMContext, presenter: Presenter):
-    #TODO временно используем эту кнопку для создания ссылки
+    data = await state.get_data()
+    presenter.group_edit_update(data)
+    await state.update_data(data)
+    await callback.message.edit_text(data['text'], reply_markup=get_edit_group_ikb())
+
+
+@rt.callback_query(F.data.startswith('add_member'))
+async def add_member_callback(callback: CallbackQuery, state: FSMContext, presenter: Presenter):
     data = await state.get_data()
     link = await create_start_link(callback.bot, presenter.create_link(data), encode=True)
     await callback.message.answer(link)
