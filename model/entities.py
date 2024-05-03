@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from sqlalchemy import BigInteger, ForeignKey, String, Integer
-from sqlalchemy.orm import mapped_column, DeclarativeBase
+from sqlalchemy.orm import mapped_column, DeclarativeBase, relationship
 
 
 class Base(DeclarativeBase):
@@ -44,6 +44,7 @@ class Group(Base):
     s_name = mapped_column(String(30))
     s_description = mapped_column(String(150))
     admin_id = mapped_column(BigInteger, ForeignKey('t_user.user_id'))
+    members = relationship('Member', back_populates='group', cascade='all, delete', passive_deletes=True)
 
     def __repr__(self) -> str:
         return (f"Group("
@@ -65,7 +66,8 @@ class Member(Base):
     s_address = mapped_column(String(150))
     recipient_id = mapped_column(Integer, ForeignKey("t_member.auto_id"))
     user_id = mapped_column(BigInteger, ForeignKey('t_user.user_id'))
-    group_auto_id = mapped_column(Integer, ForeignKey('t_group.auto_id'))
+    group_auto_id = mapped_column(Integer, ForeignKey('t_group.auto_id', ondelete='CASCADE'))
+    group = relationship('Group', back_populates='members')
 
     def __repr__(self) -> str:
         return (f"Member("

@@ -23,7 +23,7 @@ def get_create_group_ikb() -> InlineKeyboardMarkup:
 def get_groups_ikb(groups: list[Dict[str, Any]]) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     for g in groups:
-        text = f"{g['s_name']}" if (g['s_name'] is not None) else f"{g['group_id']}"
+        text = f"{g['s_name']}"
         builder.button(text=text, callback_data=f"group_choose_{g['auto_id']}")
     return (builder
             .button(text='Main menu', callback_data='to_main_menu')
@@ -45,6 +45,7 @@ def get_edit_group_ikb() -> InlineKeyboardMarkup:
             .button(text='Add member', callback_data='add_member')
             .button(text='Kick member', callback_data='kick_member')
             .button(text='Edit info', callback_data='edit_group_info')
+            .button(text='Delete group', callback_data='delete_group')
             .button(text='Main menu', callback_data='to_main_menu')
             .adjust(1)
             .as_markup())

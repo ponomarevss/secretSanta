@@ -32,10 +32,14 @@ class MemberRepository:
     def provide_member(self, user_id: int, group_auto_id: int) -> Member:
         member = self.get_member_by_user_and_group(user_id, group_auto_id)
         if member is None:
-            member = self.create_member(user_id, group_auto_id)
+            member = self.create_member_by_user_and_group(user_id, group_auto_id)
         return member
 
-    def create_member(self, user_id: int, group_auto_id: int) -> Member:
+    def create_member(self, member) -> Member:
+        self.save_member(member)
+        return self.get_member(member_id=member.member_id, user_id=member.user_id)
+
+    def create_member_by_user_and_group(self, user_id: int, group_auto_id: int) -> Member:
         member_id = self.new_member_id(user_id)
         member = Member(member_id=member_id, user_id=user_id, group_auto_id=group_auto_id)
         self.save_member(member)

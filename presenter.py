@@ -2,7 +2,7 @@ from typing import Dict, Any
 
 from sqlalchemy.orm import Session
 
-from model.entities import Link, User
+from model.entities import Link, User, Group, Member
 from repository.group_repo import GroupRepository
 from repository.link_repo import LinkRepository
 from repository.member_repo import MemberRepository
@@ -24,13 +24,64 @@ class Presenter:
         data['text'] = f"Hello, {s_username}!"
 
     def create_group_button_update(self, data):
-        data['text'] = f"{data['s_username']}\nCreate new group with you as a first member"
+        data['text'] = (f"{data['s_username']}\n"
+                        f"Create new group with you as a first member.")
 
     def confirm_create_group_update(self, data):
+        admin_id = data['user_id']
+        group_id = self.group_repo.new_group_id(admin_id)
+        data['group'] = self._group_to_dict(Group(group_id=group_id, admin_id=admin_id))
+        data['text'] = "Set name for new group."
+
+    def group_name_set_update(self, s_name, data):
+        data['group']['s_name'] = s_name
+        data['text'] = (f"Group name: {s_name}\n"
+                        f"Set group description.")
+
+    def group_description_set_update(self, s_description, data):
+        data['group']['s_description'] = s_description
+        data['text'] = (f"Group: {data['group']['s_name']}\n"
+                        f"description: {s_description}\n")
+
+    def member_edit_invitation_update(self, data):
+        data['text'] = f"Set your nickname in this group.\n"
+
+    def member_nickname_set_update(self, s_nickname, data):
         user_id = data['user_id']
-        group = self.group_repo.create_group(user_id)
-        member = self.member_repo.create_member(user_id=user_id, group_auto_id=group.auto_id)
-        data['text'] = f"{data['s_username']}\nGroup: {group.group_id}\nMember: {member.member_id}"
+        member_id = self.member_repo.new_member_id(user_id)
+        data['member'] = self._member_to_dict(Member(user_id=user_id, member_id=member_id))
+        data['member']['s_nickname'] = s_nickname
+        data['text'] = f"Now write your wishes."
+
+    def member_wishes_set_update(self, s_wishes, data):
+        data['member']['s_wishes'] = s_wishes
+        data['text'] = f"Where you'd like to catch your presents?"
+
+    def member_address_set_update(self, s_address, data):
+        data['member']['s_address'] = s_address
+        data['text'] = (f"Your nickname: {data['member']['s_nickname']}\n"
+                        f"wishes: {data['member']['s_wishes']}\n"
+                        f"address: {data['member']['s_address']}\n")
+
+    def group_create_update(self, data):
+        group_dict = data['group']
+        group = self.group_repo.create_group(Group(group_id=group_dict['group_id'],
+                                                   s_name=group_dict['s_name'],
+                                                   s_description=group_dict['s_description'],
+                                                   admin_id=group_dict['admin_id']))
+        data['group']['auto_id'] = group.auto_id
+        data['text'] = f"You are in group '{data['group']['s_name']}' as '{data['member']['s_nickname']}'\n"
+
+    def member_create_update(self, data):
+        member_dict = data['member']
+        data['member']['group_auto_id'] = data['group']['auto_id']
+        member = self.member_repo.create_member(Member(member_id=member_dict['member_id'],
+                                                       s_nickname=member_dict['s_nickname'],
+                                                       s_wishes=member_dict['s_wishes'],
+                                                       s_address=member_dict['s_address'],
+                                                       user_id=member_dict['user_id'],
+                                                       group_auto_id=member_dict['group_auto_id']))
+        data['member']['auto_id'] = member.auto_id
 
     def to_main_menu_update(self, data):
         data['text'] = f"{data['s_username']}, you are in main menu again"
@@ -45,14 +96,13 @@ class Presenter:
         member = self.member_repo.get_member_by_user_and_group(user_id=data['user_id'], group_auto_id=group_auto_id)
         members = self.member_repo.get_members_for_group(group_auto_id=group_auto_id)
         data['group'] = self._group_to_dict(group)
-        data['member'] = self._member_to_dict(member)
         data['members'] = [self._member_to_dict(m) for m in members]
+        data['member'] = self._member_to_dict(member)
         data['is_admin'] = data['user_id'] == group.admin_id
-        data['text'] = (f"{data['s_username']}, you are in group: {group.group_id}\n"
-                        f"as member: {member.member_id}\n"
+        data['text'] = (f"You are in group '{group.s_name}' as '{member.s_nickname}'\n"
                         f"members list:\n")
         for m in members:
-            data['text'] += f"{m.auto_id} - {m.user_id}\n"
+            data['text'] += f"{m.s_nickname}\n"
 
     def add_member_by_deeplink_update(self, args: str, user_id, s_username, data):
         data['user_id'] = user_id
